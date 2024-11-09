@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        #payment-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        #card-element {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+            margin-bottom: 10px; /* Space between buttons */
+        }
+        button:hover {
+            background: #4cae4c;
+        }
+        .alternative-payments {
+            margin-top: 20px;
+        }
+        #upi-payment{
+           background-color: rgb(74, 48, 221);
+        }
+        #net-banking{
+           background-color: orangered;
+        }
+        #paypal{
+           background-color: rgb(7, 191, 7);
+        }
+
+    </style>
+
+    <!-- Include Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+    <section id="payment-section">
+        <h2>Complete Your Payment</h2>
+
+        <!-- Stripe Elements Placeholder -->
+        <form id="payment-form">
+            <label for="card-element">Credit or debit card</label>
+            <div id="card-element">
+                <!-- A Stripe Element will be inserted here. -->
+            </div>
+            <div id="card-errors" role="alert"></div>
+            <button type="submit" id="pay-now">Pay Now</button>
+        </form>
+
+        <div class="alternative-payments">
+            <h3>Other Payment Methods</h3>
+            <button id="upi-payment">Pay via UPI</button>
+            <button id="net-banking">Net Banking</button>
+            <button id="paypal">PayPal</button>
+        </div>
+    </section>
+
+    <script>
+        // Set your publishable key: remember to change this to your live publishable key in production
+        var stripe = Stripe('pk_test_51Q0fHdFLplcAzhe4xzMdYMF4Ms8ph6AK2ZdQUa3mYPZ9qEyxVKIIxa5JBGZR7h19RjndbUtrBdZj0GrfyLGzbkV100FvJDoHA6'); // Replace with your actual publishable key
+        var elements = stripe.elements();
+
+        // Create an instance of the card Element
+        var card = elements.create('card', { style: { base: { fontSize: '16px', color: '#32325d', }, } });
+        
+        // Add an instance of the card Element into the `card-element` div
+        card.mount('#card-element');
+
+        // Handle real-time validation errors from the card Element
+        card.on('change', function(event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle form submission
+        var form = document.getElementById('payment-form');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Create a token using the card details
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    // Inform the user if there was an error
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Send the token to your server
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+        // Submit the token to the backend
+        function stripeTokenHandler(token) {
+            var form = document.getElementById('payment-form');
+            
+            // Create a hidden input to store the token
+            var hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'stripeToken');
+            hiddenInput.setAttribute('value', token.id);
+            
+            form.appendChild(hiddenInput);
+
+            // Submit the form
+            fetch('http://localhost:3000/charge', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ stripeToken: token.id }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Payment Successful');
+                } else {
+                    alert('Payment Failed: ' + data.error);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Handle alternative payment buttons
+        document.getElementById('upi-payment').addEventListener('click', function() {
+            alert("Redirecting to UPI payment gateway...");
+            // Here you can implement actual redirection logic if needed
+        });
+
+        document.getElementById('net-banking').addEventListener('click', function() {
+            alert("Redirecting to Net Banking options...");
+            // Here you can implement actual redirection logic if needed
+        });
+
+        document.getElementById('paypal').addEventListener('click', function() {
+            alert("Redirecting to PayPal...");
+            // Here you can implement actual redirection logic if needed
+        });
+    </script>
+</body>
+</html>

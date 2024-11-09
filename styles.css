@@ -1,0 +1,156 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+
+
+h1 {
+    margin: 0;
+}
+
+#products-section {
+    padding: 2rem;
+    text-align: center;
+}
+
+#location-status {
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.product-item {
+    background-color: white;
+    height: 250px;
+    width: 250px;
+    margin: 0.5rem;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    text-align: center;
+}
+
+.product-item img {
+    height: 250px;
+    width: 250px;
+    max-width: 100%;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+}
+/* Cart container styling */
+ /* Cart container styling */
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+}
+
+/* Image styling - make the image larger and more stylish */
+.cart-item img {
+    width: 250px; /* Increase image size */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow for style */
+    margin-right: 20px;
+    transition: transform 0.3s ease; /* Animation on hover */
+}
+
+/* Scale up image slightly on hover */
+.cart-item img:hover {
+    transform: scale(1.05); /* Slightly enlarges the image when hovered */
+}
+
+/* Quantity input styling */
+.quantity-input {
+    width: 60px; /* Keep it slightly wider for better usability */
+    text-align: center;
+    margin-right: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Price display styling */
+.cart-item span {
+    font-weight: bold;
+    color: #333;
+    margin-left: 20px;
+    font-size: 18px; /* Increase font size */
+}
+
+/* Button styling */
+#checkout {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#checkout:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .cart-item {
+        flex-direction: column; /* Stack items vertically */
+        align-items: flex-start;
+    }
+
+    .cart-item img {
+        width: 100%; /* Full width on mobile */
+        height: auto;
+        margin-bottom: 15px; /* Add space below the image */
+    }
+}
+
+
+footer {
+    position: relative;
+    height: 5px;
+    background-color: #333;
+    color: white;
+    text-align:center;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+footer p {
+    margin: 0; /* Remove default margin */
+    line-height: 1; /* Adjust line height for vertical alignment */
+}
+
+footer a {
+    color: #fff; /* Link color */
+    text-decoration: none; /* Remove underline */
+}

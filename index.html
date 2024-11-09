@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GI Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        section {
+            padding: 20px;
+        }
+
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .product-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            transition: transform 0.2s ease;
+        }
+
+        .product-item img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .product-item:hover {
+            transform: scale(1.05);
+        }
+
+        .product-item h3 {
+            margin-bottom: 5px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .product-item p {
+            margin-bottom: 5px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .add-to-cart-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #218838;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>GI Products</h1>
+        <p>Discover authentic GI products based on your location</p>
+    </header>
+    
+    <section id="products-section">
+        <h2>Your Local GI Products</h2>
+        <p id="location-status">Fetching your location...</p>
+        <div id="product-list" class="product-container"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 GI Products India</p>
+    </footer>
+
+    <script src="app.js"></script>
+
+    <script>
+        const giProducts = {
+            "Bengaluru": [
+                { name: "Mysore Silk", price: 1500, image: "https://via.placeholder.com/150" },
+                { name: "Channapatna Toys", price: 300, image: "https://via.placeholder.com/150" }
+            ],
+            "Mysuru": [
+                { name: "Mysore Pak", price: 200, image: "https://via.placeholder.com/150" },
+                { name: "Sandalwood Products", price: 500, image: "https://via.placeholder.com/150" }
+            ]
+        };
+
+        const defaultRegion = "Karnataka";
+
+        function addToCart(product) {
+            console.log(`${product.name} added to cart!`);
+        }
+
+        function displayProducts(region) {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+
+            const products = giProducts[region] || giProducts[defaultRegion];
+            if (products) {
+                products.forEach(product => {
+                    const productItem = document.createElement('div');
+                    productItem.classList.add('product-item');
+
+                    const productImage = document.createElement('img');
+                    productImage.src = product.image;
+                    productImage.alt = product.name;
+
+                    const productName = document.createElement('h3');
+                    productName.textContent = product.name;
+
+                    const productPrice = document.createElement('p');
+                    productPrice.textContent = `Price: ₹${product.price}`;
+
+                    const addToCartButton = document.createElement('button');
+                    addToCartButton.classList.add('add-to-cart-btn');
+                    addToCartButton.textContent = 'Add to Cart';
+                    addToCartButton.addEventListener('click', () => {
+                        addToCart(product);
+                        alert(`${product.name} added to cart!`);
+                    });
+
+                    productItem.appendChild(productImage);
+                    productItem.appendChild(productName);
+                    productItem.appendChild(productPrice);
+                    productItem.appendChild(addToCartButton);
+
+                    productList.appendChild(productItem);
+                });
+            } else {
+                productList.innerHTML = `<div>No GI products found for your region.</div>`;
+            }
+        }
+
+        function fetchLocation() {
+            navigator.geolocation.getCurrentPosition(position => {
+                const { latitude, longitude } = position.coords;
+
+                // Call the function from app.js to determine the region based on location
+                const region = getRegionFromCoordinates(latitude, longitude) || defaultRegion;
+                
+                document.getElementById('location-status').textContent = `Products for: ${region}`;
+                displayProducts(region);
+            }, () => {
+                document.getElementById('location-status').textContent = 'Location not available. Showing default products for Karnataka.';
+                displayProducts(defaultRegion);
+            });
+        }
+
+        window.onload = fetchLocation;
+    </script>
+
+</body>
+</html>

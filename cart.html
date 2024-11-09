@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image styling */
+        .cart-item img {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            margin-right: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .cart-item img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Quantity input styling */
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            margin-right: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        /* Price display styling */
+        .cart-item span {
+            font-weight: bold;
+            color: #333;
+            margin-left: 20px;
+            font-size: 18px;
+        }
+
+        /* Checkout button styling */
+        #checkout {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        #checkout:hover {
+            background-color: #45a049;
+        }
+
+        /* Footer styling */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        footer p {
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cart-item img {
+                width: 100%;
+                height: auto;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Your Cart</h1>
+    </header>
+    <main>
+        <div id="cart-list"></div>
+        <button id="checkout">Proceed to Checkout</button>
+    </main>
+    <footer>
+        <p>&copy; 2024 Your Company Name. All rights reserved. | <a href="#">Privacy Policy</a></p>
+    </footer>
+
+    <script>
+        // Function to display cart items from localStorage
+        function displayCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartList = document.getElementById('cart-list');
+
+            cartList.innerHTML = '';
+
+            const groupedProducts = {};
+            cart.forEach(item => {
+                if (!groupedProducts[item.name]) {
+                    groupedProducts[item.name] = { ...item, quantity: 0 };
+                }
+                groupedProducts[item.name].quantity += 1;
+            });
+
+            for (const productName in groupedProducts) {
+                const product = groupedProducts[productName];
+                const productContainer = document.createElement('div');
+                productContainer.classList.add('cart-item');
+
+                const productImage = document.createElement('img');
+                productImage.src = product.image;
+                productImage.alt = product.name;
+
+                const quantityInput = document.createElement('input');
+                quantityInput.type = 'number';
+                quantityInput.value = product.quantity;
+                quantityInput.min = 1;
+                quantityInput.classList.add('quantity-input');
+                quantityInput.addEventListener('change', function () {
+                    product.quantity = parseInt(this.value);
+                    priceDisplay.textContent = `₹${product.price * product.quantity}`;
+                    updateCartQuantity(product.name, product.quantity);
+                });
+
+                const priceDisplay = document.createElement('span');
+                priceDisplay.textContent = `₹${product.price * product.quantity}`;
+
+                productContainer.appendChild(productImage);
+                productContainer.appendChild(document.createTextNode(`${product.name} `));
+                productContainer.appendChild(quantityInput);
+                productContainer.appendChild(priceDisplay);
+                cartList.appendChild(productContainer);
+            }
+        }
+
+        // Function to update cart quantities in localStorage
+        function updateCartQuantity(productName, newQuantity) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart = cart.map(item => {
+                if (item.name === productName) {
+                    return { ...item, quantity: newQuantity };
+                }
+                return item;
+            });
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        displayCart();
+
+        document.getElementById('checkout').addEventListener('click', () => {
+            window.location.href = 'payment.html';
+        });
+    </script>
+</body>
+</html>
